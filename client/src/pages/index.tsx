@@ -8,7 +8,7 @@ import { use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 const BE = `http://localhost:4000`;
-type value = {
+type Value = {
   index: number;
   value: number;
 };
@@ -16,7 +16,7 @@ type value = {
 export default function Home() {
   const [indexes, setIndexes] = useState<number[]>([]);
 
-  const [values, setValues] = useState<value[]>([]);
+  const [values, setValues] = useState<Value[]>([]);
 
   useEffect(() => {
     fetch(`${BE}/indexes`)
@@ -67,7 +67,9 @@ export default function Home() {
 
         <SimpleList
           title="Calculated Values:"
-          listItems={["mark", "mark", "mark"]}
+          listItems={values.map((singleVal: Value) => {
+            return `For Index ${singleVal.index} , I Calculated ${singleVal.value}`;
+          })}
         />
       </div>
     </div>
