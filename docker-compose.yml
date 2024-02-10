@@ -1,0 +1,23 @@
+version: "3"
+services:
+  server:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - ./server:/app
+    ports:
+      - 8000:4000
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PGUSER=postgres
+      - PGHOST=postgres-db
+      - PGDATABASE=postgres
+      - PGPASSWORD=messi99
+      - PGPORT=5432
+  postgres-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: messi99

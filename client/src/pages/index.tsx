@@ -7,7 +7,7 @@ import SimpleList from "@/components/Lists/SimpleList";
 import { use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
-const BE = `http://localhost:4000`;
+const BE = `http://localhost:8000`;
 type Value = {
   index: number;
   value: number;
@@ -45,8 +45,6 @@ export default function Home() {
       });
   }, []);
 
-  // TODO : create 2 get requests from my endpoints on port 40000.
-  // TODO : create a userEffect to set the values of the indexes and values arrays
   return (
     <div>
       <Header title="Fib Calculator" />
