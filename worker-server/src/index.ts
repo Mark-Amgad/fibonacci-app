@@ -1,7 +1,7 @@
 import express from "express";
 
 const app = express();
-const port = 3001;
+const port = 4001;
 
 app.get("/", (req, res) => {
   res.send("worker-server is alive");

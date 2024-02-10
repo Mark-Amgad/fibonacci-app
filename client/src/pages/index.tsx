@@ -4,10 +4,10 @@ import Header from "@/components/Headers/header";
 import InputField from "@/components/InputFields/inputField";
 import SubmitButton from "@/components/Buttons/SubmitButton";
 import SimpleList from "@/components/Lists/SimpleList";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
-
+const BE = `http://localhost:4000`;
 type value = {
   index: number;
   value: number;
@@ -18,6 +18,35 @@ export default function Home() {
 
   const [values, setValues] = useState<value[]>([]);
 
+  useEffect(() => {
+    fetch(`${BE}/indexes`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setIndexes(data);
+      })
+      .catch((err) => {
+        console.log("Error in fetching Indexes data");
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch(`${BE}/values`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setValues(data);
+      })
+      .catch((err) => {
+        console.log("Error in fetching Values data");
+      });
+  }, []);
+
+  // TODO : create 2 get requests from my endpoints on port 40000.
+  // TODO : create a userEffect to set the values of the indexes and values arrays
   return (
     <div>
       <Header title="Fib Calculator" />
