@@ -4,7 +4,7 @@ import Header from "@/components/Headers/header";
 import InputField from "@/components/InputFields/inputField";
 import SubmitButton from "@/components/Buttons/SubmitButton";
 import SimpleList from "@/components/Lists/SimpleList";
-import { use, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +18,8 @@ export default function Home() {
   const [indexes, setIndexes] = useState<number[]>([]);
 
   const [values, setValues] = useState<Value[]>([]);
+
+  const [newIndex, setNewIndex] = useState<string>("");
 
   useEffect(() => {
     fetch(`${BE}/indexes`)
@@ -46,6 +48,37 @@ export default function Home() {
       });
   }, []);
 
+  const handleSubmitIndex = async () => {
+    if (Number(newIndex)) {
+      try {
+        const response = await fetch(`${BE}/indexes`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            index: Number(newIndex),
+          }),
+        });
+
+        if (response.ok) {
+          console.log(
+            "Index added successfully, Refresh to see the updated result."
+          );
+        }
+      } catch (err) {
+        console.log("Error in post a new Index");
+      }
+    }
+    setNewIndex("");
+  };
+
+  const handleChangeIndex = (e: ChangeEvent<HTMLInputElement>) => {
+    if (Number(e.target.value) >= 0) {
+      setNewIndex(e.target.value);
+    }
+  };
+
   return (
     <div>
       <Header title="Fib Calculator" />
@@ -55,8 +88,10 @@ export default function Home() {
           <InputField
             label="Enter Your value"
             placeholder="Please Enter a number"
+            value={newIndex}
+            onChange={handleChangeIndex}
           />
-          <SubmitButton label="Submit" onClick={() => {}} />
+          <SubmitButton label="Submit" onClick={handleSubmitIndex} />
         </div>
 
         <SimpleList
