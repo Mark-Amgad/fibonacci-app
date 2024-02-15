@@ -7,7 +7,8 @@ import SimpleList from "@/components/Lists/SimpleList";
 import { use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
-const BE = `http://localhost:8000`;
+const BE = process.env.BE;
+
 type Value = {
   index: number;
   value: number;
@@ -19,6 +20,7 @@ export default function Home() {
   const [values, setValues] = useState<Value[]>([]);
 
   useEffect(() => {
+    console.log(BE);
     fetch(`${BE}/indexes`)
       .then((response) => {
         return response.json();

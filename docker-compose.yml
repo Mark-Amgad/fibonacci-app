@@ -1,6 +1,6 @@
 version: "3"
 services:
-  server:
+  backend-server:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
@@ -9,7 +9,7 @@ services:
     ports:
       - 8000:4000
     environment:
-      - REDIS_HOST=redis
+      - REDIS_HOST=redis-server
       - REDIS_PORT=6379
       - PGUSER=postgres
       - PGHOST=postgres-db
@@ -21,3 +21,5 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: messi99
+  redis-server:
+    image: redis:latest

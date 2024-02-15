@@ -2,6 +2,11 @@ import express from "express";
 import cors from "cors";
 import config from "./config/config";
 import connection from "./database/connection";
+import { createClient } from "redis";
+
+const redisClient = createClient({ socket: { host: config.redisHost } });
+
+const redisPublisher = redisClient.duplicate();
 
 const app = express();
 const port = 4000;
@@ -12,6 +17,8 @@ app.listen(port, async () => {
     `CREATE TABLE IF NOT EXISTS values (id SERIAL PRIMARY KEY,number INT)`
   );
   console.log("Database is running.");
+  await redisClient.connect();
+  console.log("Redis Server is running.");
 });
 
 app.use(cors());
@@ -25,6 +32,8 @@ app.get("/", (req, res) => {
 app.get("/test", (req, res) => {
   res.send("Test endpoint");
 });
+
+// FOR REACT APP
 
 app.get("/indexes", async (req, res) => {
   console.log("indexes endpoint called !");
@@ -50,22 +59,30 @@ app.post("/indexes", async (req, res) => {
 
   const query = `INSERT INTO values(number) VALUES($1)`;
   await connection.query(query, [Number(index)]);
+  redisClient.hSet("values", index, "nothing-yet");
+  //redisPublisher.publish("insert", index);
   res.send("Index has been added");
 });
 
-app.get("/values", (req, res) => {
+app.get("/values", async (req, res) => {
   console.log("values endpoint called !");
   type valueType = {
     index: number;
     value: number;
   };
 
-  const values: valueType[] = [
-    { index: 5, value: 10 },
-    { index: 6, value: 10 },
-    { index: 7, value: 10 },
-    { index: 8, value: 10 },
-  ];
+  const redisHash = await redisClient.hGetAll("values");
+
+  const values: valueType[] = [];
+  const keys: string[] = Object.keys(redisHash);
+  keys.forEach((key, val) => {
+    values.push({
+      index: Number(key),
+      value: Number(redisHash[key]),
+    });
+  });
+
+  console.log(values);
 
   res.send(values);
 });
