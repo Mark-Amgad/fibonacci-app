@@ -6,8 +6,6 @@ import { createClient } from "redis";
 
 const redisClient = createClient({ socket: { host: config.redisHost } });
 
-const redisPublisher = redisClient.duplicate();
-
 const app = express();
 const port = 4000;
 
@@ -36,7 +34,7 @@ app.get("/test", (req, res) => {
 // FOR REACT APP
 
 app.get("/indexes", async (req, res) => {
-  console.log("indexes endpoint called !");
+  console.log("I asked to get all indexes");
   const query = `SELECT * FROM values`;
   const result = await connection.query(query);
   const indexes = [];
@@ -47,25 +45,28 @@ app.get("/indexes", async (req, res) => {
 });
 
 app.post("/indexes", async (req, res) => {
+  console.log("I asked to add a new index");
   const index = req.body.index;
 
   if (!index) {
-    return res.send("Please provide an index in the body").status(422);
+    return res.status(422).send("Please provide an index in the body");
   }
 
   if (Number(index) > 40) {
-    return res.send("This number is too high!").status(422);
+    return res.status(422).send("This number is too high!");
   }
 
   const query = `INSERT INTO values(number) VALUES($1)`;
   await connection.query(query, [Number(index)]);
   redisClient.hSet("values", index, "nothing-yet");
-  //redisPublisher.publish("insert", index);
-  res.send("Index has been added");
+  callWorkerServer(Number(index));
+  return res.send({
+    message: "Index has been added",
+  });
 });
 
 app.get("/values", async (req, res) => {
-  console.log("values endpoint called !");
+  console.log("I asked to get all calculated values");
   type valueType = {
     index: number;
     value: number;
@@ -82,7 +83,29 @@ app.get("/values", async (req, res) => {
     });
   });
 
-  console.log(values);
-
   res.send(values);
 });
+
+const callWorkerServer = async (n: number): Promise<boolean> => {
+  const endpoint = `http://${config.workerServerHost}:${config.workerServerPort}/calc-fib`;
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        index: Number(n),
+      }),
+    });
+
+    if (response.ok) {
+      console.log("Success call to worker-server");
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.log("Error in call worker server");
+  }
+  return false;
+};
