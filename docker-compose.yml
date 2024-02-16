@@ -38,3 +38,16 @@ services:
     environment:
       - REDIS_HOST=redis-server
       - REDIS_PORT=6379
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - 6500:3000
+    environment:
+      # to get the address of the BE on the client machine, because the BE calls happens from the client side
+      # So when host on cloud provider this one should change.
+      - NEXT_PUBLIC_BE=http://localhost:8000
