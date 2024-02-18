@@ -1,14 +1,12 @@
+# TODO : dockerize 2 services => backend-server and worker-server
 version: "3"
 services:
   backend-server:
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       context: ./server
-    volumes:
-      - ./server:/app
-      - /app/node_modules
     ports:
-      - 8000:4000
+      - 8500:4000
     environment:
       - REDIS_HOST=redis-server
       - REDIS_PORT=6379
@@ -19,35 +17,23 @@ services:
       - PGPORT=5432
       - WORKER_SERVER_HOST=worker-server
       - WORKER_SERVER_PORT=4001
+  worker-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./worker-server
+    environment:
+      - REDIS_HOST=redis-server
+      - REDIS_PORT=6379
+  redis-server:
+    image: redis:latest
   postgres-db:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: messi99
-  redis-server:
-    image: redis:latest
-  worker-server:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./worker-server
-    volumes:
-      - ./worker-server:/app
-      - /app/node_modules
-    ports:
-      - 8001:4001
-    environment:
-      - REDIS_HOST=redis-server
-      - REDIS_PORT=6379
   client:
     build:
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
       context: ./client
-    volumes:
-      - ./client:/app
-      - /app/node_modules
     ports:
-      - 6500:3000
-    environment:
-      # to get the address of the BE on the client machine, because the BE calls happens from the client side
-      # So when host on cloud provider this one should change.
-      - NEXT_PUBLIC_BE=http://localhost:8000
+      - 80:80
