@@ -25,6 +25,6 @@ practice docker.
 ## Run steps:
 
 1. Clone the project.
-1. Make sure that your machine has docker and docker-compost setup.
+1. Make sure that your machine has docker and docker-compose setup.
 1. RUN `docker-compose up`
 1. ping http://localhost on your browser.
