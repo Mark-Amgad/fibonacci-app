@@ -8,7 +8,7 @@ import { ChangeEvent, FormEvent, use, useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
-let BE = process.env.NEXT_PUBLIC_BE;
+let BE = process.env.NEXT_PUBLIC_BE || "http://localhost:8500";
 type Value = {
   index: number;
   value: number;

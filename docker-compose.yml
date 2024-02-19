@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       context: ./server
     ports:
-      - 8500:4000
+      - 8500:4000 # If you change this mapping, don't forget to update 'BE' variable inside the client code(index file).
     environment:
       - REDIS_HOST=redis-server
       - REDIS_PORT=6379
