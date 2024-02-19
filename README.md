@@ -2,7 +2,7 @@
 
 This project aims to provide a Dockerized development and production environments for running multiple services including Node.js servers, Redis, PostgreSQL, Next.js, and Nginx server. The setup utilizes Docker and Docker Compose for containerization and orchestration.
 
-The project functionalities doesn't require all of these services, but the purpose of the project is to
+The project functionalities don't require all of these services, but the purpose of the project is to
 practice docker.
 
 ## Services included
