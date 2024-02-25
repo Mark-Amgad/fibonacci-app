@@ -2,10 +2,11 @@
 version: "3"
 services:
   backend-server:
-    image: "markamgad4/fib-backend-server"
-    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./server
     ports:
-      - 80:4000 # If you change this mapping, don't forget to update 'BE' variable inside the client code(index file).
+      - 8500:4000 # If you change this mapping, don't forget to update 'BE' variable inside the client code(index file).
     environment:
       - REDIS_HOST=redis-server
       - REDIS_PORT=6379
@@ -17,8 +18,9 @@ services:
       - WORKER_SERVER_HOST=worker-server
       - WORKER_SERVER_PORT=4001
   worker-server:
-    image: "markamgad4/fib-worker-server"
-    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./worker-server
     environment:
       - REDIS_HOST=redis-server
       - REDIS_PORT=6379
@@ -29,3 +31,11 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: messi99
+  client:
+    depends_on:
+      - backend-server
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    ports:
+      - 80:80

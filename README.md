@@ -27,5 +27,5 @@ practice docker.
 1. Clone the project.
 2. Change your directory to the application folder `cd fibonacci-app`
 3. Make sure that your machine has docker and docker-compose setup.
-4. RUN `docker-compose up`
+4. RUN `docker-compose -f docker-compose-prod.yml up`
 5. ping http://localhost on your browser.
