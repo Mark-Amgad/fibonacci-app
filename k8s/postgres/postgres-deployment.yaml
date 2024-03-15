@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres-db
+  template:
+    metadata:
+      labels:
+        component: postgres-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fib-app-secrets
+                  key: PGPASSWORD
+                # DONE: get the variable from kubernetes secrets
+          volumeMounts:
+            # DONE: tell the container where to store the data
+            - name: db-postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+      volumes:
+        # DONE : create and attach volumes to the containers from the volume claim
+        - name: db-postgres-storage
+          persistentVolumeClaim:
+            claimName: db-persistent-volume-claim-pvc

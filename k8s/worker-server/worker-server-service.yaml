@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: worker-server-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: worker-server
+  ports:
+    - port: 4001
+      targetPort: 4001

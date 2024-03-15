@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        - name: server
+          image: markamgad4/fib-backend-server:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: REDIS_HOST
+              value: redis-server-cluster-ip-service
+            - name: REDIS_PORT
+              value: "6379"
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGDATABASE
+              value: postgres
+            - name: PGUSER
+              value: postgres
+              # DONE: pass values from kubernetes secrets
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fib-app-secrets
+                  key: PGPASSWORD
+            - name: PGPORT
+              value: "5432"
+            - name: WORKER_SERVER_HOST
+              value: worker-server-cluster-ip-service
+            - name: WORKER_SERVER_PORT
+              value: "4001"
